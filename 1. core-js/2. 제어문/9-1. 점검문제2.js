@@ -21,15 +21,18 @@ if (difficulty === 1) {
   life = 3;
 } else if (difficulty === 2) {
   life = 6;
-} else {
+} else if (difficulty === 3) {
   life = 10;
+} else {
+  alert("난이도 상으로 자동 시작.");
+  life = 3;
 }
 alert(`1~100 사이의 무작위 숫자를 ${life}번 안에 맞춰보세요!`);
 while (true) {
   let answer = +prompt(`숫자를 입력해주세요[${min} ~ ${max}]`);
   if (answer < max+1 && answer > min-1){
     if (life === 0) {
-      alert("기회를 모두 소진하셨습니다. GAME OVER!");
+      alert(`정답은 ${rn} GAME OVER!`);
       break;
     } else {
       if (answer === rn) {
