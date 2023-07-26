@@ -1,67 +1,73 @@
-alert("재미있는 사칙연산 게임\n[종료하려면 0을 누르세요]");
-let a = 0;
-let b = 0;
-let i = 1;
-let x;
-let difficulty = +prompt("난이도 설정 1.상(1~100) 2.중(1~50) 3.하 (1~20)");
-if (difficulty === 1) {
-  a = 100;
-  b = 100;
-} else if (difficulty === 2) {
-  a = 50;
-  b = 50;
-} else {
-  a = 20;
-  b = 20;
-}
-let cScore = 0;
-let wScore = 0;
+let qNum = 1; // 문제 넘버링
+
+// 정답, 오답 횟수
+let correctCount = 0;
+let wrongCount = 0;
+
+let maxNumber;
+
 while (true) {
-  let rna = Math.floor(Math.random() * a) + 1;
-  let rnb = Math.floor(Math.random() * b) + 1;
-  let rnX = Math.floor(Math.random() * 3) + 1;
-  if (rnX === 1) {
-    x = "+";
-    let answer = +prompt(`Q${i}. ${rna} ${x} ${rnb} = ??`);
-    let question = rna + rnb;
-    if (answer === 0) {
-      alert(`정답횟수: ${cScore}, 틀린횟수: ${wScore}`);
-      break;
-    } else if (question === answer) {
-      alert("정답입니다.");
-      cScore++;
-    } else if (question != answer) {
-      alert("틀렸어요~");
-      wScore++;
-    }
-  } else if (rnX === 2) {
-    x = "-";
-    let answer = +prompt(`Q${i}. ${rna} ${x} ${rnb} = ??`);
-    let question = rna - rnb;
-    if (answer === 0) {
-      alert(`정답횟수: ${cScore}, 틀린횟수: ${wScore}`);
-      break;
-    } else if (question === answer) {
-      alert("정답입니다.");
-      cScore++;
-    } else if (question != answer) {
-      alert("틀렸어요~");
-      wScore++;
-    }
-  } else if (rnX === 3) {
-    x = "*";
-    let answer = +prompt(`Q${i}. ${rna} ${x} ${rnb} = ??`);
-    let question = rna * rnb;
-    if (answer === 0) {
-      alert(`정답횟수: ${cScore}, 틀린횟수: ${wScore}`);
-      break;
-    } else if (question === answer) {
-      alert("정답입니다.");
-      cScore++;
-    } else if (question != answer) {
-      alert("틀렸어요~");
-      wScore++;
-    }
+  let message = `~~~~~~~~ 난이도를 설정합니다 ~~~~~~~~~~~~
+[1. 상 (1~100) | 2. 중 (1~50) | 3. 하 (1~20) ]`;
+  let level = +prompt(message);
+
+  if (level === 1) {
+    maxNumber = 100;
+  } else if (level === 2) {
+    maxNumber = 50;
+  } else if (level === 3) {
+    maxNumber = 20;
+  } else {
+    alert('난이도를 숫자로 다시 입력하세요!');
+    continue;
   }
-  i++
-}
+  break;
+} // end while
+
+while (true) {
+  // 랜덤 정수 2개를 생성
+  let firstNumber = Math.floor(Math.random() * maxNumber) + 1;
+  let secondNumber = Math.floor(Math.random() * maxNumber) + 1;
+
+  // 부호를 만들 랜덤 정수 생성
+  let markNum = Math.floor(Math.random() * 3);
+
+  let mark;
+  let realAnswer; // 실제 정답
+  if (markNum === 0) {
+    mark = "+";
+    realAnswer = firstNumber + secondNumber;
+  } else if (markNum === 1) {
+    if (firstNumber === secondNumber) continue;
+    else if (firstNumber < secondNumber) {
+      let t = firstNumber;
+      firstNumber = secondNumber;
+      secondNumber = t;
+    }
+    mark = "-";
+    realAnswer = firstNumber - secondNumber;
+  } else {
+    mark = "x";
+    realAnswer = firstNumber * secondNumber;
+  }
+
+  let userAnswer = +prompt(
+    `Q${qNum++}. ${firstNumber} ${mark} ${secondNumber} = ??`
+  );
+
+  if (userAnswer === 0) {
+    alert("게임을 종료합니다!");
+    break;
+  }
+
+  // 정답 확인
+  if (userAnswer === realAnswer) {
+    alert("정답입니다!");
+    correctCount++;
+  } else {
+    alert("틀렸습니다!");
+    wrongCount++;
+  }
+} // end while
+
+alert(`정답 횟수: ${correctCount}회, 틀린 횟수: ${wrongCount}회`);
