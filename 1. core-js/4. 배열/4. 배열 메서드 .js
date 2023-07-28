@@ -11,7 +11,7 @@ let findTarget = '볶음밥';
 //     }
 // }
 
-// indexOf : 배열의 특정 요소과 몇번 인덱스에 있는지 탐색
+// indexOf : 배열의 특정 요소가 몇번 인덱스에 있는지 탐색
 let index = foodList.indexOf(findTarget);
 
 console.log(`찾은 인덱스: ${index}`);
