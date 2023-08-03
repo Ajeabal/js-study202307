@@ -15,11 +15,15 @@ const $userInputs = [...$addMovieModal.querySelectorAll("input")];
 const [$titleInput, $imgUrlInput, $ratingInput] = $userInputs;
 const $entryTextSection = document.getElementById("entry-text");
 
+// 영화 삭제 모달 안에 있는 입력엘리먼트들
+const $cancelDelMovieButton = $deleteMovieModal.querySelector(".btn--passive");
+const $confirmDelMovieButton = $deleteMovieModal.querySelector(".btn--danger");
+
 // 영화목록 ul태그
 const $movieList = document.getElementById("movie-list");
 
 const CLASS_VISIBLE = "visible";
-
+let myPlaceCount = 0;
 // 영화 정보 목록 배열
 const movies = [];
 
@@ -37,12 +41,17 @@ const closeAddModal = () => {
   clearMovieModalInput();
 };
 
+// 영화삭제모달을 닫는 함수
+const closeDelModal = () => {
+  $backdrop.classList.remove(CLASS_VISIBLE);
+  $deleteMovieModal.classList.remove(CLASS_VISIBLE);
+};
+
 // 화면에 새로운 영화 정보를 렌더링하는 함수
 const renderNewMovie = ({ id, title, image, rating }) => {
   const $newMovie = document.createElement("li");
   $newMovie.classList.add("movie-element");
   $newMovie.dataset.movieId = id;
-
   $newMovie.innerHTML = `
     <div class="movie-element__image">
       <img src="${image}" alt="${title}">
@@ -52,7 +61,7 @@ const renderNewMovie = ({ id, title, image, rating }) => {
       <p>${rating} / 5</p>
     </div>
   `;
-
+  myPlaceCount++;
   // 삭제를 진행하는 핸들러
   const deleteMovieHandler = (e) => {
     // 배열에서도 영화 정보를 지워야 함!
@@ -60,32 +69,33 @@ const renderNewMovie = ({ id, title, image, rating }) => {
     const movieId = e.target.closest(".movie-element").dataset.movieId;
     console.log(movieId);
 
-    // 배열에서 해당 아이디값을 가지는 객체를 찾아내고 인덱스를 알아내기
-    // let index = -1;
-    // for (let i = 0; i < movies.length; i++) {
-    //   if (movies[i].id === movieId) {
-    //     index = i;
-    //     break;
-    //   }
-    // }
-
     // 대상의 인덱스 찾기
     // indexOf: 원시타입 (숫자, 문자열)만 찾을 수 있음
     // findIndex: 배열 고차함수
     const index = movies.findIndex((m) => m.id === movieId);
     console.log(`클릭대상 인덱스: ${index}`);
 
-    // 그 객체를 배열에서 지우기 <- ?? : 인덱스를 알아야 지우지
-    movies.splice(index, 1);
+    // 진짜 삭제합니까? 모달 띄우고 누르면 삭제 취소
+    $deleteMovieModal.classList.add(CLASS_VISIBLE);
+    $backdrop.classList.add(CLASS_VISIBLE);
 
-    // 실제 li 지우기
-    e.target.closest(".movie-element").remove();
+    // Del Movie모달 삭제버튼 클릭이벤트
+    $confirmDelMovieButton.addEventListener("click", () => {
+      // 나의 개인 저장공간 사라졌다(내용이 있으면) 나타났다
+      movies.splice(index, 1);
+      e.target.closest(".movie-element").remove();
+      if (myPlaceCount === 0) {
+        $entryTextSection.style.display = "block";
+      }
+      closeDelModal();
+    });
+    myPlaceCount--;
   };
 
   // 삭제 클릭 이벤트
   $newMovie.addEventListener("click", deleteMovieHandler);
-
   $movieList.appendChild($newMovie);
+  $entryTextSection.style.display = "none";
 };
 
 // 영화 정보 입력란 검증
@@ -109,7 +119,6 @@ const addMovieHandler = (e) => {
   const titleValue = $titleInput.value; // 제목입력란값
   const imgUrlValue = $imgUrlInput.value; // 이미지경로
   const ratingValue = $ratingInput.value; // 평점입력값
-
   // 객체로 묶기
   const newMovie = {
     id: Math.random().toString(),
@@ -148,8 +157,10 @@ const backdropHandler = (e) => {
 const closeMovieModalHandler = (e) => {
   closeAddModal();
 };
-// 오후(나의 개인 저장공간 사라졌다(내용이 있으면) 나타났다, 진짜 삭제합니까? 모달 띄우고 누르면 삭제 취소)
-
+const closeDelMovieModalHandler = (e) => {
+  closeDelModal();
+};
+const delMovieHandler = (e) => {};
 // Add movie버튼 클릭이벤트
 $addMovieButton.addEventListener("click", showMovieModalHandler);
 
@@ -161,3 +172,6 @@ $cancelAddMovieButton.addEventListener("click", closeMovieModalHandler);
 
 // Add Movie모달 추가버튼 클릭이벤트
 $confirmAddMovieButton.addEventListener("click", addMovieHandler);
+
+// Del Movie모달 취소버튼 클릭이벤트
+$cancelDelMovieButton.addEventListener("click", closeDelMovieModalHandler);
