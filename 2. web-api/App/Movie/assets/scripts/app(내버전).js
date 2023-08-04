@@ -25,6 +25,15 @@ const movies = [];
 
 // ===== 유틸함수, 일반함수 정의 ===== //
 
+// section을 조건부로 렌더링하는 함수
+const updateUI = () => {
+  if (movies.length > 0) {
+    $entryTextSection.style.display = 'none';
+  } else {
+    $entryTextSection.style.display = 'block';
+  }
+};
+
 // 모든 인풋을 리셋하는 함수
 const clearMovieModalInput = () => {
   $userInputs.forEach(($input) => ($input.value = ""));
@@ -42,9 +51,8 @@ const closeModal = (flag = "ADD", isBackdrop = false) => {
   }
 };
 
-// 실제로 영화 정보를 삭제하는 함수
-const deleteMovie = (e) => {
-  console.log("안쪽: ", e.target);
+// 실제로 영화정보를 삭제하는 함수
+const deleteMovie = ($targetLi) => {
   // 배열에서도 영화 정보를 지워야 함!
   // 클릭한 태그의 근처 li의 movie-id값 가져오기
   const movieId = $targetLi.dataset.movieId;
@@ -102,19 +110,22 @@ const renderNewMovie = ({ id, title, image, rating }) => {
 
     const confirmHandler = (e) => {
       deleteMovie($targetLi);
+      closeModal('DELETE');
+      updateUI();
     };
     $confirmDeletionBtn.onclick = confirmHandler;
 
     // 삭제 취소버튼 이벤트 등록
     const $cancelDeletionBtn = $deleteMovieModal.querySelector(".btn--passive");
-    $cancelDeletionBtn.addEventListener("click", (e) => {
+    const cancelHandler = (e) => {
       console.log("delete! canceled");
       closeModal("DELETE");
-    });
+    };
+    $cancelDeletionBtn.onclick = cancelHandler;
   };
 
   // 삭제 클릭 이벤트
-  $newMovie.removeEventListener("click", deleteMovieHandler);
+  // console.log('삭제 클릭 이벤트 붙이기!!');
   $newMovie.addEventListener("click", deleteMovieHandler);
 
   $movieList.appendChild($newMovie);
@@ -164,6 +175,7 @@ const addMovieHandler = (e) => {
   closeModal();
   // 화면에 입력한 영화정보 렌더링하기
   renderNewMovie(newMovie);
+  updateUI();
 };
 
 // 영화 추가 모달창을 띄우는 핸들러
