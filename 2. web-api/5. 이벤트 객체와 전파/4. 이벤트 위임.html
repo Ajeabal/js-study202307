@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      #fruits {
+        display: flex;
+        list-style: none;
+        padding: 20px;
+        border: 2px solid red;
+        flex-wrap: wrap;
+      }
+
+      #fruits li {
+        width: 100px;
+        cursor: pointer;
+        background: orange;
+        margin-right: 10px;
+      }
+
+      .active {
+        color: red;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <ul id="fruits">
+      <li id="apple" class="active">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="grape">Grape</li>
+    </ul>
+
+    <div>선택된 과일: <em class="msg">Apple</em></div>
+
+    <label>
+      # 새로운 과일 추가하기:
+      <input type="text" id="text-box" />
+      <button id="add">추가</button>
+    </label>
+
+    <script>
+      const $fruits = document.querySelector("#fruits");
+
+      // 클릭한 과일에 클래스 active를 부여
+      $fruits.addEventListener("click", (e) => {
+        // ul의 영역을 눌렀을 때 이벤트 처리를 취소시키는 함수
+        // matches('css selector') : 지정된 선택자와 일치하면 true
+        // console.log(e.target.matches('li'));
+        if (!e.target.matches("#fruits > li")) {
+          return;
+        }
+        removeActive();
+        console.log(e);
+        e.target.classList.add("active");
+        const $msg = document.querySelector(".msg");
+        $msg.textContent = e.target.textContent;
+      });
+
+      const $text = document.getElementById("text-box");
+      const $addBtn = document.getElementById("add");
+      $addBtn.addEventListener("click", (e) => {
+        const word = $text.value;
+        const $newLi = document.createElement("li");
+        $newLi.setAttribute("id", word.toLowerCase());
+        $newLi.textContent = word;
+        $fruits.appendChild($newLi);
+        $text.value = "";
+      });
+      // 나머지 태그의 active를 제거하는 함수
+      const removeActive = () => {
+        const $fruitsItems = [...$fruits.children];
+        $fruitsItems.forEach(($item) => {
+          if ($item.classList.contains("active")) {
+            $item.classList.remove("active");
+          }
+        });
+      };
+      const addFruitByEnterHandler = (e) => {
+        if (e.key === "Enter") {
+          $addBtn.click(); // 프로그래밍적으로 클릭명령
+        }
+      };
+      $text.addEventListener("keyup", addFruitByEnterHandler);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div><button id="b1">1</button></div>
+    <div><button id="b2">2</button></div>
+    <div><button id="b3">3</button></div>
+
+    <script>
+      // 이벤트 핸들러
+      function sayHelloHandler() {
+        alert("hello!");
+      }
+      // 프로퍼티는 객체의 속성
+      const $btn1 = document.getElementById("b1");
+      console.dir($btn1);
+      $btn1.onclick = sayHelloHandler;
+
+      const $btn2 = document.getElementById("b2");
+      $btn2.onclick = () => {
+        $btn2.style.width = "150px";
+      };
+      //   여러 핸들러를 바인딩 할 수 없음.
+      $btn2.onclick = sayHelloHandler; // 같은 onclik에 2개 X
+
+      const $btn3 = document.getElementById("b3");
+      $btn3.onmouseover = () => {
+        $btn3.style.background = "red";
+      };
+      $btn3.onmouseout = () => {
+        $btn3.style.background = "greenyellow"; // 다른 이벤트는 2개 O
+      };
+      // 이벤트 헨들러 제거
+      setTimeout(() => {
+        // 2초 이후에 실행(ms)
+        $btn3.onmouseout = null;
+      }, 2000);
+    </script>
+  </body>
+</html>
